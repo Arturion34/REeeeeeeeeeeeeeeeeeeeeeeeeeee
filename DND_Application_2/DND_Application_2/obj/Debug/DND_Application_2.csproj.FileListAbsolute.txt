@@ -1,0 +1,10 @@
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\bin\Debug\5e_Data.mdf
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\bin\Debug\5e_Data_log.ldf
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\bin\Debug\DND_Application_2.exe.config
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\bin\Debug\DND_Application_2.exe
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\bin\Debug\DND_Application_2.pdb
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.csprojResolveAssemblyReference.cache
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.Properties.Resources.resources
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.csproj.GenerateResource.Cache
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.exe
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.pdb

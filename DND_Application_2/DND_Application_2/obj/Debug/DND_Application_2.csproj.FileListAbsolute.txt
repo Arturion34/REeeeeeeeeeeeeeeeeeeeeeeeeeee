@@ -8,3 +8,5 @@ C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2
 C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.csproj.GenerateResource.Cache
 C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.exe
 C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.pdb
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.RandomOrBuiltEventForm.resources
+C:\Users\Aether\Documents\GitHub\REeeeeeeeeeeeeeeeeeeeeeeeeeee\DND_Application_2\DND_Application_2\obj\Debug\DND_Application_2.FormMain.resources

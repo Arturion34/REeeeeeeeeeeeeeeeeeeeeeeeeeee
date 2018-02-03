@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
+using DND_Application_2.Classes;
 
 namespace DND_Application_2
 {
@@ -120,28 +121,33 @@ namespace DND_Application_2
 
             //Buttons to add/remove monsters
             Button addSelectedMonster = new Button();
-            addSelectedMonster.Text = "+";
+            addSelectedMonster.Text = "Add";
             addSelectedMonster.Height = 40;
-            addSelectedMonster.Width = 40;
-            addSelectedMonster.Font = new Font(addSelectedMonster.Font.FontFamily, 30);
+            addSelectedMonster.Width = 60;
             addSelectedMonster.TextAlign = ContentAlignment.MiddleCenter;
-            addSelectedMonster.FlatAppearance.BorderSize = 0;
-            addSelectedMonster.FlatStyle = FlatStyle.Flat;
-            addSelectedMonster.Location = new Point(222, 150);
+            addSelectedMonster.Location = new Point(212, 110);
             addSelectedMonster.UseCompatibleTextRendering = true;
             addSelectedMonster.Click += new EventHandler(addMonsterToSelectedList);
 
             EncounterParametersBuild.Controls.Add(addSelectedMonster);
 
+            Button addManyMonster = new Button();
+            addManyMonster.Text = "Add Group";
+            addManyMonster.Height = 40;
+            addManyMonster.Width = 60;
+            addManyMonster.TextAlign = ContentAlignment.MiddleCenter;
+            addManyMonster.Location = new Point(212, 150);
+            addManyMonster.UseCompatibleTextRendering = true;
+            addManyMonster.Click += new EventHandler(addManyMonsters);
+
+            EncounterParametersBuild.Controls.Add(addManyMonster);
+
             Button removeSelectedMonster = new Button();
-            removeSelectedMonster.Text = "-";
+            removeSelectedMonster.Text = "Remove";
             removeSelectedMonster.Height = 40;
-            removeSelectedMonster.Width = 40;
-            removeSelectedMonster.Font = new Font(removeSelectedMonster.Font.FontFamily, 40);
+            removeSelectedMonster.Width = 60;
             removeSelectedMonster.TextAlign = ContentAlignment.MiddleCenter;
-            removeSelectedMonster.FlatAppearance.BorderSize = 0;
-            removeSelectedMonster.FlatStyle = FlatStyle.Flat;
-            removeSelectedMonster.Location = new Point(222, 190);
+            removeSelectedMonster.Location = new Point(212, 190);
             removeSelectedMonster.UseCompatibleTextRendering = true;
             removeSelectedMonster.Click += new EventHandler(removeMonsterFromSelectedList);
 
@@ -253,6 +259,7 @@ namespace DND_Application_2
             BeginEncounter.Height = 100;
             BeginEncounter.Width = 500;
             BeginEncounter.Location = new Point(0, 400);
+            BeginEncounter.Click += new EventHandler(startEncounter);
 
                 //RadioButtons to 
             this.Controls.Add(BeginEncounter);
@@ -260,6 +267,30 @@ namespace DND_Application_2
         
         //function to add monstername to selected Monster list
         private void addMonsterToSelectedList(object sender, EventArgs e)
+        {
+            int xpToAdd = 0;
+            string monsterName = potentialMonsters.GetItemText(potentialMonsters.SelectedItem);
+            Monster monsterToAdd = new Monster(monsterName);
+            string Query = "SELECT Monster.Experience from Monster WHERE Name Like '" + monsterName + "'";
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                SqlCommand getEXPSQL = new SqlCommand(Query, con);
+                getEXPSQL.CommandType = CommandType.Text;
+                getEXPSQL.CommandText = Query;
+                xpToAdd = (int)getEXPSQL.ExecuteScalar();
+
+                con.Close();
+            }
+            BuildEncounterExperience += xpToAdd;
+            selectedMonsters.Items.Add(monsterToAdd);
+            calculateBuildEncounterExperience();
+            selectedMonsters.SelectedIndex = 0;
+        }
+
+        //function to add multiple monsters to selected Monster List
+        private void addManyMonsters(object sender, EventArgs e)
         {
             int xpToAdd = 0;
             string monsterName = potentialMonsters.GetItemText(potentialMonsters.SelectedItem);
@@ -275,9 +306,20 @@ namespace DND_Application_2
 
                 con.Close();
             }
-            BuildEncounterExperience += xpToAdd;
-            selectedMonsters.Items.Add(monsterName);
+            AddMonsterGroup toAddmonsterGroup = new AddMonsterGroup(new Monster(monsterName));
+            int groupCount = 0;
+
+            DialogResult dr = toAddmonsterGroup.ShowDialog(this);
+            if(dr == DialogResult.OK)
+            {
+                groupCount = toAddmonsterGroup.getCount();
+            }
+            MonsterGroup groupToAdd = new MonsterGroup(new Monster(monsterName), groupCount);
+
+            BuildEncounterExperience += xpToAdd*groupCount;
+            selectedMonsters.Items.Add(groupToAdd);
             calculateBuildEncounterExperience();
+            selectedMonsters.SelectedIndex = 0;
         }
 
         //function to remove monster name from selected monster list
@@ -287,6 +329,13 @@ namespace DND_Application_2
             {
                 int xpToRemove = 0;
                 string monsterName = selectedMonsters.GetItemText(selectedMonsters.SelectedItem);
+                int monstercount = 1;
+
+                if((selectedMonsters.SelectedItem).GetType() == typeof(MonsterGroup))
+                {
+                    monsterName = ((MonsterGroup)(selectedMonsters.SelectedItem)).getGroupMonster().getName();
+                    monstercount = ((MonsterGroup)(selectedMonsters.SelectedItem)).getCount();
+                }
                 string Query = "SELECT Monster.Experience from Monster WHERE Name Like '" + monsterName + "'";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -299,7 +348,11 @@ namespace DND_Application_2
                     con.Close();
                 }
                 selectedMonsters.Items.RemoveAt(selectedMonsters.SelectedIndex);
-                BuildEncounterExperience -= xpToRemove;
+                if(selectedMonsters.Items.Count > 0)
+                {
+                    selectedMonsters.SelectedIndex = 0;
+                }
+                BuildEncounterExperience -= xpToRemove * monstercount;
                 calculateBuildEncounterExperience();
             }
         }
@@ -391,7 +444,21 @@ namespace DND_Application_2
         {
             calculatePartyXPDifficultyLevels(campaignParty);
             int actualExperience = 0;
-            int numberofMonsters = selectedMonsters.Items.Count;
+            int numberofMonsters = 0;
+
+            //calculate number of Monsters
+            foreach (object toCheck in selectedMonsters.Items)
+            {
+                if(toCheck.GetType() == typeof(Monster))
+                {
+                    numberofMonsters += 1;
+                }else if(toCheck.GetType() == typeof(MonsterGroup))
+                {
+                    numberofMonsters += ((MonsterGroup)toCheck).getCount();
+                }
+            }
+
+            //numberofMonsters = selectedMonsters.Items.Count;
             if(numberofMonsters <= 1)
             {
                 actualExperience = BuildEncounterExperience;
@@ -444,6 +511,17 @@ namespace DND_Application_2
             campaignParty = toSet;
         }
 
-        
+        private void startEncounter(object sender, EventArgs e)
+        {
+            List<Object> toFight = new List<Object>();
+
+            foreach(var item in selectedMonsters.Items)
+            {
+                toFight.Add(item);
+            }
+
+            InitiativeCreation eventMade = new InitiativeCreation(toFight, campaignParty.getPartyMembers());
+            eventMade.Visible = true;
+        }
     }
 }

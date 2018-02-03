@@ -61,8 +61,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddMonsterGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddMonsterGroup.Designer.cs">
+      <DependentUpon>AddMonsterGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\MonsterGroup.cs" />
     <Compile Include="Classes\PartyClass.cs" />
     <Compile Include="Classes\PlayerClass.cs" />
+    <Compile Include="EncounterManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EncounterManager.Designer.cs">
+      <DependentUpon>EncounterManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InitiativeCreation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InitiativeCreation.Designer.cs">
+      <DependentUpon>InitiativeCreation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\Monster.cs" />
     <Compile Include="RandomOrBuiltEventForm.cs">
       <SubType>Form</SubType>
     </Compile>

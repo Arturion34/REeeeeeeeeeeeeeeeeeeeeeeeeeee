@@ -55,5 +55,10 @@ namespace DND_Application_2
         {
             playerName = toSet;
         }
+
+        public override string ToString()
+        {
+            return characterName;
+        }
     }
 }

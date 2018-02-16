@@ -27,6 +27,8 @@ namespace DND_Application_2
         int currentInitiative = 0;
         Panel currentSelected;
         List<Object> monsterListForButtons;
+        Monster toFight;
+        MonsterGroup toFightGroup;
 
         int numberPlayers = 2;
         int numberMonsters;
@@ -243,7 +245,7 @@ namespace DND_Application_2
             if(currentlySelected.GetType() == typeof(Monster))
             {
                 //redefine as the actual type
-                Monster toFight = (Monster)currentlySelected;
+                toFight = (Monster)currentlySelected;
 
                 //Define Base Monster Information. Name, Type, Size, Alignment, Languages
                 baseMonsterInfo.Width = 200;
@@ -528,15 +530,16 @@ namespace DND_Application_2
                 //calculate size and location for speed label
                 for(int i = 0; i < speedLabelList.Count; i++)
                 {
+                    baseSpeedLabelY = speedLabelList[i].Height;
                     if(i%2 == 0)
                     {
                         //this is the descriptor label
                         Label toAdd = speedLabelList[i];
-                        toAdd.Location = new Point(0, baseSpeedLabelY);
+                        toAdd.Location = new Point(0, baseSpeedLabelY * (i/2));
 
                         //this is the information label
                         Label toAddData = speedLabelList[i + 1];
-                        toAddData.Location = new Point(toAdd.Width, baseSpeedLabelY);
+                        toAddData.Location = new Point(toAdd.Width, baseSpeedLabelY * (i/2));
 
                         baseMonsterSpeeds.Controls.Add(toAdd);
                         baseMonsterSpeeds.Controls.Add(toAddData);
@@ -628,7 +631,7 @@ namespace DND_Application_2
 
                 TextBox monsterResistanceInformation = new TextBox();
                 monsterResistanceInformation.Text = toFight.getResistances();
-                monsterResistanceInformation.Height = 50;
+                monsterResistanceInformation.Height = 75;
                 monsterResistanceInformation.Location = new Point(0, monsterResistanceLabel.Height);
                 monsterResistanceInformation.Multiline = true;
                 monsterResistanceInformation.Width = monsterResistances.Width;
@@ -647,34 +650,152 @@ namespace DND_Application_2
                 monsterImmunities.BorderStyle = BorderStyle.FixedSingle;
                 monsterImmunities.Location = new Point(baseMonsterStats.Location.X, monsterResistances.Location.Y + monsterResistances.Height + 20);
 
+                //define immunities list
+                List<string> immunitiesList = new List<string>();
+                string immunitiesListOne = "";
+                string immunitiesListTwo = "";
+                immunitiesList = toFight.getImmunities();
+                for(int i = 0; i < immunitiesList.Count; i++)
+                {
+                    if(i%2 == 0)
+                    {
+                        immunitiesListOne += (immunitiesList[i]) + "\r\n";
+                    }
+                    else
+                    {
+                        immunitiesListTwo += (immunitiesList[i]) + "\r\n";
+                    }
+                }
+
                 Label monsterImmunityiesLabel = new Label();
                 monsterImmunityiesLabel.Text = "Immunities";
                 monsterImmunityiesLabel.TextAlign = ContentAlignment.MiddleCenter;
                 monsterImmunityiesLabel.Width = monsterResistances.Width;
                 monsterImmunityiesLabel.Location = new Point(0, 0);
 
-                TextBox monsterImmunitiesInfo = new TextBox();
-                monsterImmunitiesInfo.Text = toFight.getImmunities();
-                monsterImmunitiesInfo.Height = 50;
-                monsterImmunitiesInfo.Location = new Point(0, monsterResistanceLabel.Height);
-                monsterImmunitiesInfo.Multiline = true;
-                monsterImmunitiesInfo.Width = monsterResistances.Width;
-                monsterImmunitiesInfo.ReadOnly = true;
-                monsterImmunitiesInfo.ScrollBars = ScrollBars.Vertical;
+                TextBox monsterImmunitiesInfoOne = new TextBox();
+                monsterImmunitiesInfoOne.Text = immunitiesListOne;
+                monsterImmunitiesInfoOne.Height = 75;
+                monsterImmunitiesInfoOne.Location = new Point(0, monsterResistanceLabel.Height);
+                monsterImmunitiesInfoOne.Multiline = true;
+                monsterImmunitiesInfoOne.Width = monsterResistances.Width/2;
+                monsterImmunitiesInfoOne.ReadOnly = true;
+                //monsterImmunitiesInfoOne.ScrollBars = ScrollBars.Vertical;
 
-                monsterImmunities.Height = monsterImmunityiesLabel.Height + monsterImmunitiesInfo.Height;
+                TextBox monsterImmunitiesInfoTwo = new TextBox();
+                monsterImmunitiesInfoTwo.Text = immunitiesListTwo;
+                monsterImmunitiesInfoTwo.Height = 75;
+                monsterImmunitiesInfoTwo.Location = new Point(monsterImmunitiesInfoOne.Width, monsterResistanceLabel.Height);
+                monsterImmunitiesInfoTwo.Multiline = true;
+                monsterImmunitiesInfoTwo.Width = monsterResistances.Width / 2;
+                monsterImmunitiesInfoTwo.ReadOnly = true;
+                //monsterImmunitiesInfoTwo.ScrollBars = ScrollBars.Vertical;
+
+                monsterImmunities.Height = monsterImmunityiesLabel.Height + monsterImmunitiesInfoOne.Height;
                 monsterImmunities.Controls.Add(monsterImmunityiesLabel);
-                monsterImmunities.Controls.Add(monsterImmunitiesInfo);
+                monsterImmunities.Controls.Add(monsterImmunitiesInfoTwo);
+                monsterImmunities.Controls.Add(monsterImmunitiesInfoOne);
 
                 currentSelected.Controls.Add(monsterImmunities);
 
+                //MonsterHP&AC
+                Panel monsterHPArmor = new Panel();
+                monsterHPArmor.Location = new Point(baseMonsterInfo.Location.X + baseMonsterInfo.Width + 20, baseMonsterInfo.Location.Y);
+
+                Label maxHPLabel = new Label();
+                maxHPLabel.Text = "Max HP :";
+                maxHPLabel.Location = new Point(0, 0);
+
+                Label maxHPInfo = new Label();
+                maxHPInfo.Text = toFight.getMaxHP().ToString();
+                maxHPInfo.Location = new Point(maxHPLabel.Location.X + maxHPLabel.Width, maxHPLabel.Location.Y);
+
+                monsterHPArmor.Controls.Add(maxHPLabel);
+                monsterHPArmor.Controls.Add(maxHPInfo);
+                
+                //Curr HP management
+                Label currHPLabel = new Label();
+                currHPLabel.Text = "Current HP :";
+                currHPLabel.Location = new Point(maxHPInfo.Location.X + maxHPInfo.Width + 20, 0);
+
+                TextBox currHPInfo = new TextBox();
+                currHPInfo.Text = toFight.getCurrentHP().ToString();
+                currHPInfo.Location = new Point(currHPLabel.Location.X + currHPLabel.Width, 0);
+                currHPInfo.TextChanged += new EventHandler(monsterHealthUpdate);
+
+                monsterHPArmor.Controls.Add(currHPLabel);
+                monsterHPArmor.Controls.Add(currHPInfo);
+
+                //AC Labels
+                Label ACLabel = new Label();
+                ACLabel.Text = "Armor Class";
+                ACLabel.Location = new Point(currHPInfo.Location.X + currHPInfo.Width + 20, 0);
+
+                Label ACinfo = new Label();
+                ACinfo.Text = toFight.getArmorClass().ToString();
+                ACinfo.Location = new Point(ACLabel.Location.X + ACLabel.Width, 0);
+
+                monsterHPArmor.Controls.Add(ACLabel);
+                monsterHPArmor.Controls.Add(ACinfo);
+
+                monsterHPArmor.Width = 0;
+                foreach(Control item in monsterHPArmor.Controls)
+                {
+                    monsterHPArmor.Width += item.Width;
+                }
+                currentSelected.Controls.Add(monsterHPArmor);
 
             }
             else if(currentlySelected.GetType() == typeof(MonsterGroup))
             {
                 //redefine as actual type
-                MonsterGroup toFight = (MonsterGroup)currentlySelected;
+                toFightGroup = (MonsterGroup)currentlySelected;
             }
+        }
+
+        private void monsterHealthUpdate(object sender, EventArgs e)
+        {
+            TextBox eventThrower = (TextBox)sender;
+
+            //check cases
+            if (!checkStringForNonNumber(eventThrower.Text))
+            {
+                //contains non-numbers
+                MessageBox.Show("HP must consist of numbers...");
+                eventThrower.Text = toFight.getCurrentHP().ToString();
+            }
+            else if (string.IsNullOrEmpty(eventThrower.Text))
+            {
+                //empty textbox
+            }
+            else if(Convert.ToInt32(eventThrower.Text)  > toFight.getMaxHP())
+            {
+                //invalid amount greater than MAX HP
+                MessageBox.Show("This is more than the max HP...");
+                eventThrower.Text = toFight.getCurrentHP().ToString();
+            }
+            else
+            {
+                //valid entry, update
+                toFight.setCurrentHP(Convert.ToInt32(eventThrower.Text));
+            }
+        }
+
+        //returns false if contains non-number characters
+        private bool checkStringForNonNumber(string testString)
+        {
+            bool toRet = true;
+
+            foreach(char toTest in testString)
+            {
+                if (!char.IsNumber(toTest))
+                {
+                    //not a number, error
+                    toRet = false;
+                }
+            }
+
+            return toRet;
         }
     }
 }

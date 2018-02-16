@@ -14,6 +14,8 @@ namespace DND_Application_2
     {
         string connectionString = ConfigurationManager.ConnectionStrings["DND_Application_2.Properties.Settings._5e_DataConnectionString"].ConnectionString;
         private int maxHP;
+        private int currHP;
+        private int ArmorClass;
         string Name;
         private int strength;
         private int dexterity;
@@ -32,7 +34,7 @@ namespace DND_Application_2
         private string skills;
         private string savingThrows;
         private string resistances = "ResistancesPlaceholder";
-        private string immunities = "ImmunitiesPlaceholder";
+        private List <string> immunities;
         private List<string> Languages;
 
         public Monster(string Name)
@@ -68,6 +70,9 @@ namespace DND_Application_2
                     type = (string)monsterInfo.Rows[0]["Type"];
                     size = (string)monsterInfo.Rows[0]["Size"];
                     alignment = (string)monsterInfo.Rows[0]["Alignment"];
+                    maxHP = (int)monsterInfo.Rows[0]["MaxHitPoints"];
+                    currHP = maxHP;
+                    ArmorClass = (int)monsterInfo.Rows[0]["AC"];
 
                     //fill speeds;
                     walkspeed = (int?)monsterInfo.Rows[0]["LandSpeed"];
@@ -121,6 +126,25 @@ namespace DND_Application_2
                             }
                         }
                     }
+
+                    //fill immunities
+                    immunities = new List<string>();
+                    string ImminutiesQuery = "SELECT Name From DamageTypes as c LEFT JOIN DamageTypes_xref as a ON((C.DamageTypeID = a.DamageTypeID) AND a.ResistanceIndicator = '1') WHERE a.MonsterID = '" + monsterID + "'";
+                    using (SqlConnection ImmunitiesConnection = new SqlConnection(connectionString))
+                    {
+                        using (SqlDataAdapter languageAdaptor = new SqlDataAdapter(ImminutiesQuery, ImmunitiesConnection))
+                        {
+                            DataTable immunitiesTable = new DataTable();
+                            languageAdaptor.Fill(immunitiesTable);
+
+                            foreach (DataRow languageRow in immunitiesTable.Rows)
+                            {
+                                immunities.Add((((string)languageRow["Name"])));
+                            }
+                        }
+                    }
+
+                    //fill resistances
 
                     //fill baseStats
                     strength = (int)monsterInfo.Rows[0]["Strength"];
@@ -240,9 +264,24 @@ namespace DND_Application_2
             return resistances;
         }
 
-        public string getImmunities()
+        public List<string> getImmunities()
         {
             return immunities;
+        }
+
+        public int getCurrentHP()
+        {
+            return currHP;
+        }
+
+        public void setCurrentHP( int toSet)
+        {
+            currHP = toSet;
+        }
+
+        public int getArmorClass()
+        {
+            return ArmorClass;
         }
 
         //Tostring function

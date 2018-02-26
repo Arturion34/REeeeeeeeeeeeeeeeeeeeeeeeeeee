@@ -67,6 +67,7 @@
     <Compile Include="AddMonsterGroup.Designer.cs">
       <DependentUpon>AddMonsterGroup.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\MonsterAction.cs" />
     <Compile Include="Classes\MonsterGroup.cs" />
     <Compile Include="Classes\PartyClass.cs" />
     <Compile Include="Classes\PlayerClass.cs" />

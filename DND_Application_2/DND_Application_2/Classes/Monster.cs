@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DND_Application_2.Classes;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -36,6 +37,7 @@ namespace DND_Application_2
         private string resistances = "ResistancesPlaceholder";
         private List <string> immunities;
         private List<string> Languages;
+        private List<MonsterAction> actionList;
 
         public Monster(string Name)
         {
@@ -140,6 +142,35 @@ namespace DND_Application_2
                             foreach (DataRow languageRow in immunitiesTable.Rows)
                             {
                                 immunities.Add((((string)languageRow["Name"])));
+                            }
+                        }
+                    }
+                    //fill actions
+                    string actionQuery = "Select * From MonsterActions Where MonsterID = '" + monsterID + "'";
+                    actionList = new List<MonsterAction>();
+                    using (SqlConnection ActionsConnection = new SqlConnection(connectionString))
+                    {
+                        using (SqlDataAdapter actionsAdaptor = new SqlDataAdapter(actionQuery, ActionsConnection))
+                        {
+                            DataTable actionsTable = new DataTable();
+                            actionsAdaptor.Fill(actionsTable);
+
+                            foreach (DataRow actionRow in actionsTable.Rows)
+                            {
+                                string actionName = actionRow["Name"].ToString();
+                                string actionDescription = actionRow["Description"].ToString();
+                                bool isLegendary = (bool)actionRow["LegendaryIndicator"];
+                                int numberUses;
+                                try
+                                {
+                                    numberUses = (int)actionRow["Uses"];
+                                }catch (Exception e)
+                                {
+                                    numberUses = 0;
+                                }
+
+                                MonsterAction toAdd = new MonsterAction(actionName, isLegendary, actionDescription, numberUses);
+                                actionList.Add(toAdd);
                             }
                         }
                     }
@@ -282,6 +313,11 @@ namespace DND_Application_2
         public int getArmorClass()
         {
             return ArmorClass;
+        }
+
+        public List<MonsterAction> getActions()
+        {
+            return actionList;
         }
 
         //Tostring function
